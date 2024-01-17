@@ -18,9 +18,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF270E01)),
         fontFamily: GoogleFonts.poppins().fontFamily,
         appBarTheme: const AppBarTheme(
-            iconTheme: IconThemeData(color: Colors.white),
-            backgroundColor: Color(0xFF270E01),
-            titleTextStyle: TextStyle(color: Colors.white)),
+          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Color(0xFF270E01),
+        ),
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -40,18 +40,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.exit_to_app),
-        title: const Text('Title'),
+        centerTitle: true,
+        title: const Text(
+          'Charcoal Vendor',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
