@@ -1,3 +1,4 @@
+import 'package:charcoal_vendor/screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -17,41 +18,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF270E01)),
         fontFamily: GoogleFonts.poppins().fontFamily,
+        scaffoldBackgroundColor: const Color(0xFFE7ECEF),
         appBarTheme: const AppBarTheme(
           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Color(0xFF270E01),
         ),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const Icon(Icons.exit_to_app),
-        centerTitle: true,
-        title: const Text(
-          'Charcoal Vendor',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
-        ),
-      ),
+      home: const HomePage(),
     );
   }
 }
