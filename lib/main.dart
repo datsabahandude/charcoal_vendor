@@ -1,5 +1,6 @@
 import 'package:charcoal_vendor/screens/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -12,12 +13,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Charcoal Vendor',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF270E01)),
-        fontFamily: GoogleFonts.poppins().fontFamily,
+        fontFamily: GoogleFonts.openSans().fontFamily,
         scaffoldBackgroundColor: const Color(0xFFE7ECEF),
         appBarTheme: const AppBarTheme(
           iconTheme: IconThemeData(color: Colors.white),

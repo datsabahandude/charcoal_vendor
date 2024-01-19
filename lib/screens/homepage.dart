@@ -1,5 +1,9 @@
+import 'package:charcoal_vendor/screens/historypage.dart';
+import 'package:charcoal_vendor/screens/new_order_page.dart';
+import 'package:charcoal_vendor/screens/stockpage.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +24,8 @@ class _HomePageState extends State<HomePage> {
     }
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(Icons.exit_to_app),
+        leading:
+            IconButton(onPressed: () {}, icon: const Icon(Icons.exit_to_app)),
         centerTitle: true,
         title: const Text(
           'Charcoal Vendor',
@@ -35,58 +40,95 @@ class _HomePageState extends State<HomePage> {
           runSpacing: 20,
           alignment: WrapAlignment.center,
           children: <Widget>[
-            Container(
-                clipBehavior: Clip.antiAlias,
-                padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                constraints: BoxConstraints(minWidth: height * 0.2),
-                decoration: BoxDecoration(
-                    color: const Color(0xFFE7ECEF),
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 5,
-                        offset: -const Offset(2, 2),
-                        color: Colors.white,
-                        inset: false,
-                      ),
-                      const BoxShadow(
-                        blurRadius: 5,
-                        offset: Offset(6, 6),
-                        color: Colors.grey,
-                        inset: false,
-                      )
-                    ]),
-                child: const Text(
-                  'New Order',
-                  textAlign: TextAlign.center,
-                  // style: txtfont,
-                )),
-            Container(
-                clipBehavior: Clip.antiAlias,
-                padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                constraints: BoxConstraints(minWidth: height * 0.2),
-                decoration: BoxDecoration(
-                    color: const Color(0xFFE7ECEF),
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 5,
-                        offset: -const Offset(2, 2),
-                        color: Colors.white,
-                        inset: false,
-                      ),
-                      const BoxShadow(
-                        blurRadius: 5,
-                        offset: Offset(6, 6),
-                        color: Colors.grey,
-                        inset: false,
-                      )
-                    ]),
-                child: const Text(
-                  'History',
-                  textAlign: TextAlign.center,
-                  // style: txtfont,
-                )),
+            InkWell(
+              onTap: () {
+                Get.to(const NewOrderPage());
+              },
+              child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                  constraints: BoxConstraints(minWidth: height * 0.2),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFE7ECEF),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 5,
+                          offset: -const Offset(2, 2),
+                          color: Colors.white,
+                          inset: false,
+                        ),
+                        const BoxShadow(
+                          blurRadius: 5,
+                          offset: Offset(6, 6),
+                          color: Colors.grey,
+                          inset: false,
+                        )
+                      ]),
+                  child: const Text(
+                    'New Order',
+                    textAlign: TextAlign.center,
+                    // style: txtfont,
+                  )),
+            ),
+            InkWell(
+              onTap: () => Get.to(const StockPage()),
+              child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                  constraints: BoxConstraints(minWidth: height * 0.2),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFE7ECEF),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 5,
+                          offset: -const Offset(2, 2),
+                          color: Colors.white,
+                          inset: false,
+                        ),
+                        const BoxShadow(
+                          blurRadius: 5,
+                          offset: Offset(6, 6),
+                          color: Colors.grey,
+                          inset: false,
+                        )
+                      ]),
+                  child: const Text(
+                    'Stock',
+                    textAlign: TextAlign.center,
+                    // style: txtfont,
+                  )),
+            ),
+            InkWell(
+              onTap: () => Get.to(const HistoryPage()),
+              child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                  constraints: BoxConstraints(minWidth: height * 0.2),
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFE7ECEF),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 5,
+                          offset: -const Offset(2, 2),
+                          color: Colors.white,
+                          inset: false,
+                        ),
+                        const BoxShadow(
+                          blurRadius: 5,
+                          offset: Offset(6, 6),
+                          color: Colors.grey,
+                          inset: false,
+                        )
+                      ]),
+                  child: const Text(
+                    'History',
+                    textAlign: TextAlign.center,
+                    // style: txtfont,
+                  )),
+            ),
           ],
         ),
       ),
