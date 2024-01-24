@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final VoidCallback? onPressed;
-  const CustomAppBar({super.key, required this.title, this.onPressed});
+  final Function() onPressed;
+  const CustomAppBar({super.key, required this.title, required this.onPressed});
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
   @override
   Widget build(BuildContext context) {
     return AppBar(
       leading: IconButton(
-        onPressed: () => onPressed,
+        onPressed: onPressed,
         icon: const Icon(Icons.chevron_left_outlined),
       ),
       centerTitle: true,
