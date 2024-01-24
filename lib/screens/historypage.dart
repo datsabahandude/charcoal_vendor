@@ -16,10 +16,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'History',
-        onPressed: () {
-          // Get.off(const HomePage());
-          Get.back();
-        },
+        onPressed: () => Get.off(const HomePage()),
       ),
     );
   }
