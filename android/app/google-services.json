@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "632718409371",
+    "project_id": "charcoalvendor-63975",
+    "storage_bucket": "charcoalvendor-63975.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632718409371:android:82089609415692d7fe903e",
+        "android_client_info": {
+          "package_name": "com.datsabahandude.charcoal_vendor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvH9Nv3vWL7UbO_tLMpjbEm-EeN8820sU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
