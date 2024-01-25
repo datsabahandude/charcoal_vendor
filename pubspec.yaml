@@ -12,17 +12,22 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  google_fonts: ^4.0.3
-  lottie: ^2.2.0
+  google_fonts: ^6.1.0
+  lottie: ^3.0.0
   flutter_inset_box_shadow: ^1.0.8
   get: ^4.6.6
+  cloud_firestore: ^4.9.3 # firebase cloud storage
+  firebase_auth: ^4.16.0 # enable authentication from multiple platform fb/gmail/etc..
+  firebase_core: ^2.24.2 # Firebase core API
+  firebase_storage: ^11.6.0 # to store image file etc
+  image_picker: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
   flutter_native_splash: ^2.3.2
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 flutter_native_splash:
   # color_dark: "#121212"
