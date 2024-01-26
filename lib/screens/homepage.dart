@@ -1,6 +1,8 @@
 import 'package:charcoal_vendor/screens/customer_list.dart';
 import 'package:charcoal_vendor/screens/historypage.dart';
+import 'package:charcoal_vendor/screens/loginpage.dart';
 import 'package:charcoal_vendor/screens/stockpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import 'package:get/get.dart';
@@ -26,8 +28,12 @@ class _HomePageState extends State<HomePage> {
       canPop: false,
       child: Scaffold(
         appBar: AppBar(
-          leading:
-              IconButton(onPressed: () {}, icon: const Icon(Icons.exit_to_app)),
+          leading: IconButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+                Get.off(const LoginPage());
+              },
+              icon: const Icon(Icons.exit_to_app)),
           centerTitle: true,
           title: const Text(
             'Charcoal Vendor',

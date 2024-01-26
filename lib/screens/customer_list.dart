@@ -77,7 +77,6 @@ class _CustomerListState extends State<CustomerList> {
                           ),
                         );
                       } else {
-                        // _isLoading = false;
                         _customerList = snapshot.data!.docs
                             .map((doc) => Customer.fromSnapshot(doc))
                             .toList();
@@ -90,7 +89,13 @@ class _CustomerListState extends State<CustomerList> {
                             itemBuilder: (context, index) {
                               final item = _customerList[index];
                               item as Customer;
-                              return null;
+                              return Card(
+                                child: ListTile(
+                                  leading: Image.network(item.img!),
+                                  title: Text(item.customer!),
+                                  subtitle: Text(item.location!),
+                                ),
+                              );
                             },
                           ),
                         );

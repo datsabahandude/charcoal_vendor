@@ -187,6 +187,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                             final isValid = _formKey.currentState!.validate();
                             if (image == null) {
                               debugPrint('No image');
+                              Get.snackbar('Error', 'No Image detected');
                             } else if ((image != null) && isValid) {
                               setState(() {
                                 isLoading = true;
@@ -194,7 +195,9 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                               uploadImg();
                             } else if (!isValid) {
                               debugPrint('Empty');
+                              Get.snackbar('Error', 'Please fill in the form');
                             } else {
+                              Get.snackbar('Error', 'Error Occured');
                               debugPrint('Error occured');
                             }
                           },
