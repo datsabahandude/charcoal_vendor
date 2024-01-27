@@ -4,7 +4,8 @@ import 'package:charcoal_vendor/screens/add_customer_page.dart';
 import 'package:charcoal_vendor/screens/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
+import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 import 'package:get/get.dart';
 
 class CustomerList extends StatefulWidget {
@@ -89,11 +90,44 @@ class _CustomerListState extends State<CustomerList> {
                             itemBuilder: (context, index) {
                               final item = _customerList[index];
                               item as Customer;
-                              return Card(
+                              return Container(
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFE7ECEF),
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        blurRadius: 5,
+                                        offset: -const Offset(2, 2),
+                                        color: Colors.white,
+                                        inset: false,
+                                      ),
+                                      const BoxShadow(
+                                        blurRadius: 5,
+                                        offset: Offset(6, 6),
+                                        color: Colors.grey,
+                                        inset: false,
+                                      )
+                                    ]),
                                 child: ListTile(
-                                  leading: Image.network(item.img!),
-                                  title: Text(item.customer!),
+                                  onTap: () {},
+                                  leading: CircleAvatar(
+                                    radius: 28,
+                                    backgroundImage:
+                                        NetworkImage('${item.img}'),
+                                  ),
+                                  title: Text(
+                                    item.customer!,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                   subtitle: Text(item.location!),
+                                  trailing: InkWell(
+                                    onTap: () {},
+                                    child: const Icon(
+                                      Icons.delete,
+                                      color: Color(0xFFB51423),
+                                    ),
+                                  ),
                                 ),
                               );
                             },
@@ -116,4 +150,67 @@ class _CustomerListState extends State<CustomerList> {
       ),
     );
   }
+  // void popup() {
+  //   showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //             title: const Text('Choose',
+  //                 style: TextStyle(
+  //                   fontWeight: FontWeight.w600,
+  //                   color: Color(0xFF270E01),
+  //                 )),
+  //             content: SingleChildScrollView(
+  //               child: ListBody(
+  //                 children: [
+  //                   InkWell(
+  //                     splashColor: const Color(0xFF270E01),
+  //                     onTap: _pickImageCamera,
+  //                     child: const Row(
+  //                       children: [
+  //                         Padding(
+  //                           padding: EdgeInsets.all(8.0),
+  //                           child: Icon(
+  //                             Icons.camera_alt,
+  //                             color: Color(0xFF270E01),
+  //                           ),
+  //                         ),
+  //                         Text(
+  //                           'Camera',
+  //                           style: TextStyle(
+  //                             fontSize: 20,
+  //                             color: Color(0xFF270E01),
+  //                             fontWeight: FontWeight.w500,
+  //                           ),
+  //                         )
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   InkWell(
+  //                     splashColor: const Color(0xFF270E01),
+  //                     onTap: _pickImageGallery,
+  //                     child: const Row(
+  //                       children: [
+  //                         Padding(
+  //                           padding: EdgeInsets.all(8.0),
+  //                           child: Icon(
+  //                             Icons.image_outlined,
+  //                             color: Color(0xFF270E01),
+  //                           ),
+  //                         ),
+  //                         Text(
+  //                           'Gallery',
+  //                           style: TextStyle(
+  //                               fontSize: 20,
+  //                               color: Color(0xFF270E01),
+  //                               fontWeight: FontWeight.w500),
+  //                         )
+  //                       ],
+  //                     ),
+  //                   )
+  //                 ],
+  //               ),
+  //             ));
+  //       });
+  // }
 }
