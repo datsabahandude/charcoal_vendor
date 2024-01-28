@@ -2,6 +2,7 @@ import 'package:charcoal_vendor/components/customappbar.dart';
 import 'package:charcoal_vendor/models/list_model.dart';
 import 'package:charcoal_vendor/screens/add_customer_page.dart';
 import 'package:charcoal_vendor/screens/homepage.dart';
+import 'package:charcoal_vendor/screens/new_order_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
@@ -109,7 +110,9 @@ class _CustomerListState extends State<CustomerList> {
                                       )
                                     ]),
                                 child: ListTile(
-                                  onTap: () {},
+                                  onTap: () => Get.to(NewOrderPage(
+                                    item: item,
+                                  )),
                                   leading: CircleAvatar(
                                     radius: 28,
                                     backgroundImage:

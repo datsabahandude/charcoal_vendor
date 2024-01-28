@@ -126,9 +126,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
         body: Center(
           child: Column(
             children: <Widget>[
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
               Stack(
                 children: [
                   CircleAvatar(
