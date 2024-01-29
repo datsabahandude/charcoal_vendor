@@ -4,7 +4,6 @@ import 'package:charcoal_vendor/components/customappbar.dart';
 import 'package:charcoal_vendor/screens/customer_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -120,104 +119,109 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
         Get.off(const CustomerList());
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: CustomAppBar(
             title: 'Add Customer',
             onPressed: () => Get.off(const CustomerList())),
         body: Center(
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 15),
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 102,
-                    backgroundColor: const Color(0xFF270E01),
-                    child: imageBytes != null
-                        ? ClipOval(
-                            child: Image.memory(
-                              imageBytes!,
-                              width: 200,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const CircleAvatar(
-                            radius: 100,
-                            backgroundImage: AssetImage(
-                                'assets/images/charcoal_transparent.png'),
-                            backgroundColor: Colors.white,
+          child: isLoading
+              ? const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Color(0xFF270E01)))
+              : Column(
+                  children: <Widget>[
+                    const SizedBox(height: 15),
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 102,
+                          backgroundColor: const Color(0xFF270E01),
+                          child: imageBytes != null
+                              ? ClipOval(
+                                  child: Image.memory(
+                                    imageBytes!,
+                                    width: 200,
+                                    height: 200,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : const CircleAvatar(
+                                  radius: 100,
+                                  backgroundImage: AssetImage(
+                                      'assets/images/charcoal_transparent.png'),
+                                  backgroundColor: Colors.white,
+                                ),
+                        ),
+                        Positioned(
+                          right: 10,
+                          bottom: 10,
+                          child: ElevatedButton(
+                              onPressed: () => popup(),
+                              style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  backgroundColor: Colors.white),
+                              child: const Icon(Icons.add_a_photo_outlined)),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          const SizedBox(
+                            height: 15.0,
                           ),
-                  ),
-                  Positioned(
-                    right: 10,
-                    bottom: 10,
-                    child: ElevatedButton(
-                        onPressed: () => popup(),
-                        style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            backgroundColor: Colors.white),
-                        child: const Icon(Icons.add_a_photo_outlined)),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Form(
-                  key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 15.0,
+                          nameField,
+                          locationField,
+                        ],
                       ),
-                      nameField,
-                      locationField,
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.white,
-                        child: MaterialButton(
-                          padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                          onPressed: () async {
-                            final isValid = _formKey.currentState!.validate();
-                            if (image == null) {
-                              debugPrint('No image');
-                              Get.snackbar('Error', 'No Image detected');
-                            } else if ((image != null) && isValid) {
-                              setState(() {
-                                isLoading = true;
-                              });
-                              uploadImg();
-                            } else if (!isValid) {
-                              debugPrint('Empty');
-                              Get.snackbar('Error', 'Please fill in the form');
-                            } else {
-                              Get.snackbar('Error', 'Error Occured');
-                              debugPrint('Error occured');
-                            }
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                          child: const Text(
-                            "Add Customer",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Color(0xFF270E01),
-                                fontWeight: FontWeight.bold),
-                          ),
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    Material(
+                      elevation: 5,
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                      child: MaterialButton(
+                        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                        onPressed: () async {
+                          final isValid = _formKey.currentState!.validate();
+                          if (image == null) {
+                            debugPrint('No image');
+                            Get.snackbar('Error', 'No Image detected');
+                          } else if ((image != null) && isValid) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            uploadImg();
+                          } else if (!isValid) {
+                            debugPrint('Empty');
+                            Get.snackbar('Error', 'Please fill in the form');
+                          } else {
+                            Get.snackbar('Error', 'Error Occured');
+                            debugPrint('Error occured');
+                          }
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        child: const Text(
+                          "Add Customer",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF270E01),
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                    ],
-                  ))
-            ],
-          ),
+                    ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                  ],
+                ),
         ),
       ),
     );
@@ -299,14 +303,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
       });
     } on PlatformException catch (e) {
       debugPrint('$e');
-      // Fluttertoast.showToast(
-      //     msg: '$e',
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.CENTER,
-      //     timeInSecForIosWeb: 1,
-      //     backgroundColor: Colors.red,
-      //     textColor: Colors.white,
-      //     fontSize: 16.0);
+      Get.snackbar('Error', 'Something went wrong');
     }
     Get.back();
   }
@@ -323,14 +320,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
       });
     } on PlatformException catch (e) {
       debugPrint('$e');
-      // Fluttertoast.showToast(
-      //     msg: '$e',
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.CENTER,
-      //     timeInSecForIosWeb: 1,
-      //     backgroundColor: Colors.red,
-      //     textColor: Colors.white,
-      //     fontSize: 16.0);
+      Get.snackbar('Error', 'Something went wrong');
     }
     Get.back();
   }
@@ -355,17 +345,25 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
     customerModel.cid = cid;
     customerModel.location = locationEditingController.text;
     customerModel.img = url;
-
-    await firebaseFirestore
-        .collection('Users')
-        .doc(user!.uid)
-        .collection('Customers')
-        .doc(cid) //empty = random generate
-        .set(customerModel.toMap())
-        .then((value) => processDone());
+    try {
+      await firebaseFirestore
+          .collection('Users')
+          .doc(user!.uid)
+          .collection('Customers')
+          .doc(cid) //empty = random generate
+          .set(customerModel.toMap())
+          .then((value) => processDone());
+    } catch (e) {
+      debugPrint('$e');
+      Get.snackbar('Error', 'Something went wrong');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void processDone() {
+    Get.snackbar('Success', 'Customer Added');
     Navigator.pushAndRemoveUntil(
         (context),
         MaterialPageRoute(builder: (context) => const CustomerList()),

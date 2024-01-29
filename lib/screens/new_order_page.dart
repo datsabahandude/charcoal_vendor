@@ -1,4 +1,7 @@
 import 'package:charcoal_vendor/screens/customer_list.dart';
+import 'package:charcoal_vendor/screens/homepage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -8,26 +11,34 @@ import '../models/list_model.dart';
 
 class NewOrderPage extends StatefulWidget {
   final Customer item;
-  const NewOrderPage({super.key, required this.item});
+  final int stocks;
+  const NewOrderPage({super.key, required this.item, required this.stocks});
 
   @override
   State<NewOrderPage> createState() => _NewOrderPageState();
 }
 
-class _NewOrderPageState extends State<NewOrderPage> {
+class _NewOrderPageState extends State<NewOrderPage>
+    with SingleTickerProviderStateMixin {
+  _NewOrderPageState() {
+    _selectedVal = status[0];
+  }
   TextEditingController qtyController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   DateTime datetime = DateTime.now();
   String date = DateFormat('d MMM yyyy HH:mm').format(DateTime.now());
-  // double iprice = 3;
-  // int qty = 1;
-  // double total = 0;
+  final status = ['Pending', 'Done', 'Cancelled'];
+  String? _selectedVal = '';
+  int? stock;
+  bool isLoading = false;
+  User? user = FirebaseAuth.instance.currentUser;
+  FirebaseFirestore fire = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
-    qtyController.text = '1';
-    priceController.text = '3';
-    // calc();
+    qtyController.text = '0';
+    priceController.text = '3.5';
+    stock = widget.stocks;
   }
 
   @override
@@ -41,89 +52,180 @@ class _NewOrderPageState extends State<NewOrderPage> {
         Get.off(const CustomerList());
       },
       child: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: CustomAppBar(
-              title: 'New Order',
+              title: 'Order (${widget.item.customer})',
               onPressed: () => Get.off(const CustomerList())),
           body: Center(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 15),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                      boxShadow: const [
-                        BoxShadow(color: Colors.black, spreadRadius: 1)
-                      ]),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                          onPressed: () => setDate(context),
-                          icon: const Icon(
-                            Icons.calendar_month_outlined,
-                          )),
-                      date.isNotEmpty
-                          ? Text(
-                              date,
-                              style: const TextStyle(
-                                  decoration: TextDecoration.underline),
-                            )
-                          : const SizedBox(),
-                    ],
-                  ),
-                ),
-                DataTable(columns: const <DataColumn>[
-                  DataColumn(label: Text('Quantity'), numeric: true),
-                  // DataColumn(label: Text('')),
-                  DataColumn(label: Text('Price'), numeric: true),
-                  // DataColumn(label: Text('')),
-                  DataColumn(label: Text('Total'), numeric: true),
-                ], rows: <DataRow>[
-                  DataRow(cells: [
-                    DataCell(
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(Color(0xFF270E01)))
+                : Column(
+                    children: <Widget>[
+                      const SizedBox(height: 15),
                       Container(
-                        alignment: Alignment.center,
-                        child: GestureDetector(
-                          child: Text(qtyController.text),
-                          onTap: () {
-                            _editCell('Quantity', qtyController.text)
-                                .then((newValue) {
-                              if (newValue != null) {
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.white,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black, spreadRadius: 1)
+                            ]),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    onPressed: () => setDate(context),
+                                    icon: const Icon(
+                                      Icons.calendar_month_outlined,
+                                    )),
+                                date.isNotEmpty
+                                    ? Text(
+                                        date,
+                                        style: const TextStyle(
+                                            decoration:
+                                                TextDecoration.underline),
+                                      )
+                                    : const SizedBox(),
+                              ],
+                            ),
+                            DropdownButtonFormField(
+                              value: _selectedVal,
+                              items: status
+                                  .map((e) => DropdownMenuItem(
+                                      value: e,
+                                      child: Text(
+                                        e,
+                                        style: const TextStyle(
+                                            color: Color(0xFF270E01),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      )))
+                                  .toList(),
+                              onChanged: (val) {
                                 setState(() {
-                                  qtyController.text = newValue;
+                                  _selectedVal = val as String;
                                 });
-                              }
-                            });
-                          },
+                              },
+                              dropdownColor: Colors.white,
+                              decoration: InputDecoration(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 180),
+                                prefixIcon: _selectedVal == 'Pending'
+                                    ? const Icon(
+                                        Icons.pending_rounded,
+                                      )
+                                    : _selectedVal == 'Done'
+                                        ? const Icon(
+                                            Icons.done,
+                                            color: Colors.green,
+                                          )
+                                        : _selectedVal == 'Cancelled'
+                                            ? const Icon(
+                                                Icons.cancel_outlined,
+                                                color: Color(0xFFB51423),
+                                              )
+                                            : const Icon(
+                                                Icons.event_repeat_outlined),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                fillColor: Colors.white,
+                                filled: true,
+                                contentPadding:
+                                    const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    // const DataCell(Text('x')),
-                    DataCell(
-                      GestureDetector(
-                        child: Text('RM ${priceController.text}'),
-                        onTap: () {
-                          _editCell('Price', priceController.text)
-                              .then((newValue) {
-                            if (newValue != null) {
-                              setState(() {
-                                priceController.text = newValue;
-                              });
-                            }
-                          });
-                        },
+                      const SizedBox(height: 15),
+                      DataTable(
+                        headingTextStyle: const TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        columns: <DataColumn>[
+                          DataColumn(
+                              label: Text(
+                                  'Quantity (${stock! - int.parse(qtyController.text)})')),
+                          const DataColumn(label: Text('Price')),
+                          const DataColumn(label: Text('Total')),
+                        ],
+                        rows: <DataRow>[
+                          DataRow(
+                            cells: [
+                              DataCell(
+                                showEditIcon: true,
+                                onTap: () {
+                                  _editCell('Quantity', qtyController.text)
+                                      .then((newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        qtyController.text = newValue;
+                                      });
+                                    }
+                                  });
+                                },
+                                Container(
+                                  alignment: Alignment.center,
+                                  child: Text(qtyController.text),
+                                ),
+                              ),
+                              DataCell(
+                                showEditIcon: true,
+                                onTap: () {
+                                  _editCell('Price', priceController.text)
+                                      .then((newValue) {
+                                    if (newValue != null) {
+                                      setState(() {
+                                        priceController.text = newValue;
+                                      });
+                                    }
+                                  });
+                                },
+                                Text('RM ${priceController.text}'),
+                              ),
+                              DataCell(
+                                Text('RM ${calculateTotal()}'),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                    // const DataCell(Text('=')),
-                    DataCell(
-                      Text('RM ${calculateTotal()}'),
-                    ),
-                  ]),
-                ]),
-              ],
-            ),
+                      const SizedBox(height: 25),
+                      Material(
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(30),
+                        color: Colors.white,
+                        child: MaterialButton(
+                          padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                          onPressed: () {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            postDetailsToFireStore();
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          child: const Text(
+                            "Add Order",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Color(0xFF270E01),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                    ],
+                  ),
           )),
     );
   }
@@ -190,8 +292,41 @@ class _NewOrderPageState extends State<NewOrderPage> {
     return total.toString();
   }
 
-  // void calc() {
-  //   total =
-  //       double.parse(qtyController.text) * double.parse(priceController.text);
-  // }
+  Future postDetailsToFireStore() async {
+    var oid = DateTime.now().toString();
+    int sendtime = datetime.millisecondsSinceEpoch;
+
+    try {
+      await fire
+          .collection('Users')
+          .doc(user!.uid)
+          .collection('Customers')
+          .doc(widget.item.cid)
+          .collection('Orders')
+          .doc(oid)
+          .set({
+        'oid': oid,
+        'time': sendtime,
+        'status': _selectedVal,
+        'name': widget.item.customer,
+        'location': widget.item.location,
+        'qty': qtyController.text,
+        'price': priceController.text,
+      }).then((value) => processDone());
+    } catch (e) {
+      Get.snackbar('Error', 'Something went wrong');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void processDone() {
+    Get.snackbar('Success', 'Order Added');
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => const HomePage()),
+        (route) => false);
+    setState(() => isLoading = false);
+  }
 }
