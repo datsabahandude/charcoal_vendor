@@ -3,8 +3,10 @@ import 'package:charcoal_vendor/screens/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/customappbar.dart';
 import '../models/list_model.dart';
@@ -33,9 +35,11 @@ class _NewOrderPageState extends State<NewOrderPage>
   bool isLoading = false;
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseFirestore fire = FirebaseFirestore.instance;
+  late SharedPreferences _pref;
   @override
   void initState() {
     super.initState();
+    init();
     qtyController.text = '0';
     priceController.text = '3.5';
     stock = widget.stocks;
@@ -230,6 +234,12 @@ class _NewOrderPageState extends State<NewOrderPage>
     );
   }
 
+  Future<void> init() async {
+    _pref = await SharedPreferences.getInstance();
+    priceController.text = _pref.getString('${widget.item.cid}') ?? '3.5';
+    setState(() {});
+  }
+
   Future<void> setDate(context) async {
     DateTime? datePick = await showDatePicker(
         context: context,
@@ -262,6 +272,13 @@ class _NewOrderPageState extends State<NewOrderPage>
           title: Text('Edit $title'),
           content: TextField(
             controller: TextEditingController(text: currentValue),
+            inputFormatters: <TextInputFormatter>[
+              // allow only number formats
+              title == 'Price'
+                  ? FilteringTextInputFormatter.allow(
+                      RegExp(r'^(\d+)?\.?\d{0,2}'))
+                  : FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+            ],
             onChanged: (value) {
               currentValue = value;
             },
@@ -276,6 +293,9 @@ class _NewOrderPageState extends State<NewOrderPage>
             ),
             TextButton(
               onPressed: () {
+                if (title == 'Price') {
+                  _pref.setString('${widget.item.cid}', currentValue);
+                }
                 Navigator.pop(context, currentValue);
               },
               child: const Text('Save'),
@@ -312,9 +332,22 @@ class _NewOrderPageState extends State<NewOrderPage>
         'location': widget.item.location,
         'qty': qtyController.text,
         'price': priceController.text,
-      }).then((value) => processDone());
+      }).then((value) => updateStock(qtyController.text));
     } catch (e) {
       Get.snackbar('Error', 'Something went wrong');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> updateStock(String qty) async {
+    int newstock = stock! - int.parse(qty);
+    DocumentReference docRef = fire.collection('Users').doc(user!.uid);
+    try {
+      await docRef.update({'stock': newstock}).then((value) => processDone());
+    } catch (e) {
+      Get.snackbar('Error', 'Error updating stock');
       setState(() {
         isLoading = false;
       });

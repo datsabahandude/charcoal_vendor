@@ -22,7 +22,7 @@ class _CustomerListState extends State<CustomerList> {
   Stream<QuerySnapshot>? _customerStream;
   List<Object> _customerList = [];
   FirebaseFirestore fire = FirebaseFirestore.instance;
-  int remainingstock = 500;
+  int remainingstock = 0;
   @override
   void initState() {
     super.initState();
@@ -32,6 +32,7 @@ class _CustomerListState extends State<CustomerList> {
         .collection('Customers')
         .snapshots();
     // need to add listener for remaining stock
+    fetchStock();
   }
 
   @override
@@ -163,6 +164,15 @@ class _CustomerListState extends State<CustomerList> {
         ),
       ),
     );
+  }
+
+  Future<void> fetchStock() async {
+    DocumentReference docRef = fire.collection('Users').doc(user!.uid);
+    await docRef.get().then((value) {
+      setState(() {
+        remainingstock = value['stock'] ?? 0;
+      });
+    });
   }
 
   void popup(image, customer, id) {
