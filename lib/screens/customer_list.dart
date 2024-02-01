@@ -117,10 +117,12 @@ class _CustomerListState extends State<CustomerList> {
                                         )
                                       ]),
                                   child: ListTile(
-                                    onTap: () => Get.to(NewOrderPage(
-                                      item: item,
-                                      stocks: remainingstock,
-                                    )),
+                                    onTap: () => Get.to(
+                                      NewOrderPage(
+                                        item: item,
+                                        stocks: remainingstock,
+                                      ),
+                                    ),
                                     leading: CircleAvatar(
                                       radius: 28,
                                       backgroundImage:

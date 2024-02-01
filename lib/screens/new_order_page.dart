@@ -125,7 +125,7 @@ class _NewOrderPageState extends State<NewOrderPage>
                                     : _selectedVal == 'Done'
                                         ? const Icon(
                                             Icons.done,
-                                            color: Colors.green,
+                                            color: Color(0xFF138808),
                                           )
                                         : _selectedVal == 'Cancelled'
                                             ? const Icon(
@@ -320,11 +320,11 @@ class _NewOrderPageState extends State<NewOrderPage>
       await fire
           .collection('Users')
           .doc(user!.uid)
-          .collection('Customers')
-          .doc(widget.item.cid)
           .collection('Orders')
           .doc(oid)
           .set({
+        'cid': widget.item.cid,
+        'img': widget.item.img,
         'oid': oid,
         'time': sendtime,
         'status': _selectedVal,
