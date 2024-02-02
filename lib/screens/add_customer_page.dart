@@ -191,7 +191,8 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                           final isValid = _formKey.currentState!.validate();
                           if (image == null) {
                             debugPrint('No image');
-                            Get.snackbar('Error', 'No Image detected');
+                            Get.snackbar('Error', 'No Image detected',
+                                backgroundColor: Colors.white);
                           } else if ((image != null) && isValid) {
                             setState(() {
                               isLoading = true;
@@ -199,9 +200,11 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
                             uploadImg();
                           } else if (!isValid) {
                             debugPrint('Empty');
-                            Get.snackbar('Error', 'Please fill in the form');
+                            Get.snackbar('Error', 'Please fill in the form',
+                                backgroundColor: Colors.white);
                           } else {
-                            Get.snackbar('Error', 'Error Occured');
+                            Get.snackbar('Error', 'Error Occured',
+                                backgroundColor: Colors.white);
                             debugPrint('Error occured');
                           }
                         },
@@ -303,7 +306,8 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
       });
     } on PlatformException catch (e) {
       debugPrint('$e');
-      Get.snackbar('Error', 'Something went wrong');
+      Get.snackbar('Error', 'Something went wrong',
+          backgroundColor: Colors.white);
     }
     Get.back();
   }
@@ -320,7 +324,8 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
       });
     } on PlatformException catch (e) {
       debugPrint('$e');
-      Get.snackbar('Error', 'Something went wrong');
+      Get.snackbar('Error', 'Something went wrong',
+          backgroundColor: Colors.white);
     }
     Get.back();
   }
@@ -355,7 +360,8 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
           .then((value) => processDone());
     } catch (e) {
       debugPrint('$e');
-      Get.snackbar('Error', 'Something went wrong');
+      Get.snackbar('Error', 'Something went wrong',
+          backgroundColor: Colors.white);
       setState(() {
         isLoading = false;
       });
@@ -363,7 +369,7 @@ class _AddCustomerPageState extends State<AddCustomerPage> {
   }
 
   void processDone() {
-    Get.snackbar('Success', 'Customer Added');
+    Get.snackbar('Success', 'Customer Added', backgroundColor: Colors.white);
     Navigator.pushAndRemoveUntil(
         (context),
         MaterialPageRoute(builder: (context) => const CustomerList()),

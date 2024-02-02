@@ -362,7 +362,8 @@ class _NewOrderPageState extends State<NewOrderPage>
         'price': priceController.text,
       }).then((value) => updateStock(qtyController.text));
     } catch (e) {
-      Get.snackbar('Error', 'Something went wrong');
+      Get.snackbar('Error', 'Something went wrong',
+          backgroundColor: Colors.white);
       setState(() {
         isLoading = false;
       });
@@ -375,7 +376,8 @@ class _NewOrderPageState extends State<NewOrderPage>
     try {
       await docRef.update({'stock': newstock}).then((value) => processDone());
     } catch (e) {
-      Get.snackbar('Error', 'Error updating stock');
+      Get.snackbar('Error', 'Error updating stock',
+          backgroundColor: Colors.white);
       setState(() {
         isLoading = false;
       });
@@ -383,7 +385,7 @@ class _NewOrderPageState extends State<NewOrderPage>
   }
 
   void processDone() {
-    Get.snackbar('Success', 'Order Added');
+    Get.snackbar('Success', 'Order Added', backgroundColor: Colors.white);
     Navigator.pushAndRemoveUntil(
         (context),
         MaterialPageRoute(builder: (context) => const HomePage()),

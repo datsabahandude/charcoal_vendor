@@ -208,7 +208,7 @@ class _CustomerListState extends State<CustomerList> {
       Get.back();
     } catch (e) {
       debugPrint(e.toString());
-      Get.snackbar('Error', 'Unable to delete');
+      Get.snackbar('Error', 'Unable to delete', backgroundColor: Colors.white);
     }
   }
 }

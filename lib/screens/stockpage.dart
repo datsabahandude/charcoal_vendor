@@ -125,12 +125,13 @@ class _StockPageState extends State<StockPage> {
           .doc(user!.uid)
           .set({'stock': updatedstock}).then((value) => processDone());
     } catch (e) {
-      Get.snackbar('Error', 'Something went wrong');
+      Get.snackbar('Error', 'Something went wrong',
+          backgroundColor: Colors.white);
     }
   }
 
   void processDone() {
-    Get.snackbar('Success', 'Stock Updated');
+    Get.snackbar('Success', 'Stock Updated', backgroundColor: Colors.white);
     Navigator.pop(context);
   }
 }

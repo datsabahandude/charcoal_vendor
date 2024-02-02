@@ -184,7 +184,8 @@ class _LoginPageState extends State<LoginPage> {
       setState(() => isLoading = false);
     } catch (e) {
       setState(() => isLoading = false);
-      Get.snackbar('Error', 'Incorrect Credentials');
+      Get.snackbar('Error', 'Incorrect Credentials',
+          backgroundColor: Colors.white);
     }
   }
 
