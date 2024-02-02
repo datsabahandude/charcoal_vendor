@@ -1,11 +1,8 @@
-import 'package:charcoal_vendor/screens/customer_list.dart';
-import 'package:charcoal_vendor/screens/historypage.dart';
-import 'package:charcoal_vendor/screens/loginpage.dart';
-import 'package:charcoal_vendor/screens/stockpage.dart';
+import 'package:charcoal_vendor/components/custom_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
-import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+
+import '../components/history_body.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,132 +12,77 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  int? currentTab;
+  User? user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
-    Orientation currentOrientation = MediaQuery.of(context).orientation;
-    double height;
-    if (currentOrientation == Orientation.portrait) {
-      height = MediaQuery.of(context).size.width;
-    } else {
-      height = MediaQuery.of(context).size.height;
-    }
     return PopScope(
-      canPop: false,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Get.off(const LoginPage());
-              },
-              icon: const Icon(Icons.exit_to_app)),
-          centerTitle: true,
-          title: const Text(
-            'Charcoal Vendor',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        body: Container(
-          alignment: Alignment.center,
-          // color: Colors.transparent,
-          child: Wrap(
-            spacing: 15,
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  Get.to(const CustomerList());
+        canPop: false,
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            key: scaffoldKey,
+            backgroundColor: const Color(0xFFE7ECEF),
+            appBar: AppBar(
+              centerTitle: true,
+              leading: IconButton(
+                onPressed: () {
+                  scaffoldKey.currentState!.openDrawer();
                 },
-                child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                    constraints: BoxConstraints(minWidth: height * 0.2),
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFE7ECEF),
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 5,
-                            offset: -const Offset(2, 2),
-                            color: Colors.white,
-                            inset: false,
-                          ),
-                          const BoxShadow(
-                            blurRadius: 5,
-                            offset: Offset(6, 6),
-                            color: Colors.grey,
-                            inset: false,
-                          )
-                        ]),
-                    child: const Text(
-                      'New Order',
-                      textAlign: TextAlign.center,
-                      // style: txtfont,
-                    )),
+                icon: const Icon(Icons.list_outlined, color: Colors.white),
               ),
-              InkWell(
-                onTap: () => Get.to(const StockPage()),
-                child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                    constraints: BoxConstraints(minWidth: height * 0.2),
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFE7ECEF),
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 5,
-                            offset: -const Offset(2, 2),
-                            color: Colors.white,
-                            inset: false,
-                          ),
-                          const BoxShadow(
-                            blurRadius: 5,
-                            offset: Offset(6, 6),
-                            color: Colors.grey,
-                            inset: false,
-                          )
-                        ]),
-                    child: const Text(
-                      'Stock',
-                      textAlign: TextAlign.center,
-                      // style: txtfont,
-                    )),
-              ),
-              InkWell(
-                onTap: () => Get.to(const HistoryPage()),
-                child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                    constraints: BoxConstraints(minWidth: height * 0.2),
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFE7ECEF),
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 5,
-                            offset: -const Offset(2, 2),
-                            color: Colors.white,
-                            inset: false,
-                          ),
-                          const BoxShadow(
-                            blurRadius: 5,
-                            offset: Offset(6, 6),
-                            color: Colors.grey,
-                            inset: false,
-                          )
-                        ]),
-                    child: const Text(
-                      'History',
-                      textAlign: TextAlign.center,
-                      // style: txtfont,
-                    )),
-              ),
-            ],
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      DateTime? datePick = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2023),
+                          lastDate: DateTime(2025));
+                      if (datePick == null) return;
+
+                      // filterNavigate(
+                      //     scaffoldKey, currentTab ?? 0, datePick, isDriver);
+                    },
+                    icon: const Icon(
+                      Icons.calendar_month_outlined,
+                      color: Colors.white,
+                    ))
+              ],
+              bottom: const TabBar(
+                  labelColor: Colors.white,
+                  labelStyle:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  unselectedLabelColor: Colors.grey,
+                  unselectedLabelStyle: TextStyle(
+                    fontSize: 17,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorColor: Color(0xFFFCA311),
+                  tabs: <Widget>[
+                    Tab(
+                      child: Text('Pending'),
+                    ),
+                    Tab(
+                      child: Text('Complete'),
+                    ),
+                  ]),
+            ),
+            body: TabBarView(
+              children: [
+                HistoryBody(
+                  isOrder: true,
+                  uid: user!.uid,
+                ),
+                HistoryBody(
+                  isOrder: false,
+                  uid: user!.uid,
+                ),
+              ],
+            ),
+            drawer: const CustomDrawer(),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
