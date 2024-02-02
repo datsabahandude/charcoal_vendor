@@ -1,5 +1,6 @@
 class OrderList {
   String? cid;
+  String? oid;
   String? img;
   String? customer;
   String? location;
@@ -11,6 +12,7 @@ class OrderList {
   OrderList();
   OrderList.fromSnapshot(snapshot)
       : cid = snapshot.data()['cid'],
+        oid = snapshot.data()['oid'],
         img = snapshot.data()['img'],
         customer = snapshot.data()['name'],
         location = snapshot.data()['location'],

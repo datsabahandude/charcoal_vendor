@@ -27,9 +27,10 @@ class _NewOrderPageState extends State<NewOrderPage>
   }
   TextEditingController qtyController = TextEditingController();
   TextEditingController priceController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
   DateTime datetime = DateTime.now();
   String date = DateFormat('d MMM yyyy HH:mm').format(DateTime.now());
-  final status = ['Pending', 'Done', 'Cancelled'];
+  final status = ['Pending', 'Done'];
   String? _selectedVal = '';
   int? stock;
   bool isLoading = false;
@@ -42,11 +43,41 @@ class _NewOrderPageState extends State<NewOrderPage>
     init();
     qtyController.text = '0';
     priceController.text = '3.5';
+    locationController.text = widget.item.location!;
+
     stock = widget.stocks;
   }
 
   @override
   Widget build(BuildContext context) {
+    final locationField = TextField(
+        maxLength: 15,
+        autofocus: false,
+        controller: locationController,
+        keyboardType: TextInputType.emailAddress,
+        onChanged: (value) {
+          locationController.text = value;
+        },
+        decoration: InputDecoration(
+            constraints: const BoxConstraints(maxWidth: 180),
+            floatingLabelBehavior: FloatingLabelBehavior.never,
+            errorStyle: const TextStyle(
+              color: Color(0xFFFF1C0C),
+              fontWeight: FontWeight.w500,
+            ),
+            fillColor: Colors.white,
+            filled: true,
+            prefixIcon: const Icon(Icons.location_on_outlined,
+                color: Color(0xFF270E01)),
+            contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+            hintText: "Location",
+            hintStyle: const TextStyle(
+              fontSize: 16.0,
+              color: Color(0xFF270E01),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            )));
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -127,13 +158,8 @@ class _NewOrderPageState extends State<NewOrderPage>
                                             Icons.done,
                                             color: Color(0xFF138808),
                                           )
-                                        : _selectedVal == 'Cancelled'
-                                            ? const Icon(
-                                                Icons.cancel_outlined,
-                                                color: Color(0xFFB51423),
-                                              )
-                                            : const Icon(
-                                                Icons.event_repeat_outlined),
+                                        : const Icon(
+                                            Icons.event_repeat_outlined),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -143,6 +169,8 @@ class _NewOrderPageState extends State<NewOrderPage>
                                     const EdgeInsets.fromLTRB(20, 15, 20, 15),
                               ),
                             ),
+                            const SizedBox(height: 15),
+                            locationField,
                           ],
                         ),
                       ),
@@ -329,7 +357,7 @@ class _NewOrderPageState extends State<NewOrderPage>
         'time': sendtime,
         'status': _selectedVal,
         'name': widget.item.customer,
-        'location': widget.item.location,
+        'location': locationController.text,
         'qty': qtyController.text,
         'price': priceController.text,
       }).then((value) => updateStock(qtyController.text));
