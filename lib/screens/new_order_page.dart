@@ -236,6 +236,9 @@ class _NewOrderPageState extends State<NewOrderPage>
                         child: MaterialButton(
                           padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
                           onPressed: () {
+                            if (qtyController.text == '0') {
+                              return;
+                            }
                             setState(() {
                               isLoading = true;
                             });
@@ -264,7 +267,7 @@ class _NewOrderPageState extends State<NewOrderPage>
 
   Future<void> init() async {
     _pref = await SharedPreferences.getInstance();
-    priceController.text = _pref.getString('${widget.item.cid}') ?? '3.5';
+    // priceController.text = _pref.getString('${widget.item.cid}') ?? '3.5';
     setState(() {});
   }
 
@@ -321,6 +324,9 @@ class _NewOrderPageState extends State<NewOrderPage>
             ),
             TextButton(
               onPressed: () {
+                if (currentValue.isEmpty) {
+                  currentValue = '0';
+                }
                 if (title == 'Price') {
                   _pref.setString('${widget.item.cid}', currentValue);
                 }
