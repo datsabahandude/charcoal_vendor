@@ -1,7 +1,9 @@
+import 'package:charcoal_vendor/screens/stockpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../screens/customer_list.dart';
 import '../screens/loginpage.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -10,7 +12,7 @@ class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      // backgroundColor: const Color(0xFF270E01),
+      backgroundColor: const Color(0xFF270E01),
       child: SafeArea(
           child: Stack(
         children: [
@@ -47,8 +49,9 @@ class CustomDrawer extends StatelessWidget {
   }
 
   Widget buildHeader(context) {
-    return SizedBox(
-      height: 260,
+    return CircleAvatar(
+      radius: 100,
+      backgroundColor: Colors.white,
       child: Image.asset(
         'assets/images/charcoal_transparent.png',
         fit: BoxFit.fitHeight,
@@ -59,21 +62,25 @@ class CustomDrawer extends StatelessWidget {
   Widget buildBody(context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      child: Column(children: <ListTile>[
-        ListTile(
-          onTap: () {},
-          title: const Text('New Order'),
-          trailing: const Icon(
-            Icons.chevron_right_outlined,
-            color: Colors.white,
+      child: Column(children: <Card>[
+        Card(
+          child: ListTile(
+            onTap: () => Get.to(const CustomerList()),
+            title: const Text('New Order'),
+            trailing: const Icon(
+              Icons.chevron_right_outlined,
+              // color: Colors.white,
+            ),
           ),
         ),
-        ListTile(
-          onTap: () {},
-          title: const Text('Stock'),
-          trailing: const Icon(
-            Icons.chevron_right_outlined,
-            color: Colors.white,
+        Card(
+          child: ListTile(
+            onTap: () => Get.to(const StockPage()),
+            title: const Text('Stock'),
+            trailing: const Icon(
+              Icons.chevron_right_outlined,
+              // color: Colors.white,
+            ),
           ),
         ),
       ]),
