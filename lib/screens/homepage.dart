@@ -1,6 +1,8 @@
 import 'package:charcoal_vendor/components/custom_drawer.dart';
+import 'package:charcoal_vendor/screens/historypage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../components/history_body.dart';
 
@@ -41,9 +43,7 @@ class _HomePageState extends State<HomePage> {
                           firstDate: DateTime(2023),
                           lastDate: DateTime(2025));
                       if (datePick == null) return;
-
-                      // filterNavigate(
-                      //     scaffoldKey, currentTab ?? 0, datePick, isDriver);
+                      Get.to(HistoryPage(time: datePick, uid: user!.uid));
                     },
                     icon: const Icon(
                       Icons.calendar_month_outlined,

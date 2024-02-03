@@ -1,99 +1,135 @@
+import 'package:charcoal_vendor/components/customappbar.dart';
+import 'package:charcoal_vendor/models/order_model.dart';
 import 'package:charcoal_vendor/screens/homepage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
-import '../components/history_body.dart';
+import '../components/history_card.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key});
+  final DateTime time;
+  final String uid;
+  const HistoryPage({
+    super.key,
+    required this.time,
+    required this.uid,
+  });
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  int? currentTab;
-  User? user = FirebaseAuth.instance.currentUser;
+  Stream<QuerySnapshot>? _historyStream;
+  List<Object> _historyList = [];
+  bool isDriver = false;
+  String err = '';
+  double totalEarning = 0;
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-          key: scaffoldKey,
-          backgroundColor: const Color(0xFFE7ECEF),
-          appBar: AppBar(
-            leadingWidth: 110,
-            centerTitle: true,
-            leading: TextButton.icon(
-              onPressed: () => Get.off(const HomePage()),
-              icon: const Icon(
-                Icons.chevron_left_outlined,
-                size: 30,
-                color: Colors.white,
-              ),
-              label: const Text(
-                'Back',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400),
-              ),
-            ),
-            title: const Text(
-              'History',
-              style: TextStyle(color: Colors.white),
-            ),
-            actions: [
-              IconButton(
-                  onPressed: () async {
-                    DateTime? datePick = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2023),
-                        lastDate: DateTime(2025));
-                    if (datePick == null) return;
+    String date = DateFormat('d MMM yyyy').format(widget.time);
+    return PopScope(
+        canPop: false,
+        onPopInvoked: (val) async {
+          if (val) {
+            return;
+          }
+          Get.off(const HomePage());
+        },
+        child: Scaffold(
+          appBar: CustomAppBar(
+              title: date, onPressed: () => Get.off(const HomePage())),
+          body: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: Column(children: [
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: _historyStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation(Color(0xFF14213D))),
+                        );
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                          child: Text(
+                            'Snapshot Error!',
+                          ),
+                        );
+                      } else if (!snapshot.hasData ||
+                          snapshot.data!.docs.isEmpty) {
+                        if (err.isNotEmpty) {
+                          return Center(
+                              child: Text(
+                            err,
+                            style: const TextStyle(fontSize: 26),
+                          ));
+                        } else {
+                          return const Center(
+                            child: Text(
+                              'No Trip History',
+                              style: TextStyle(fontSize: 26),
+                            ),
+                          );
+                        }
+                      } else {
+                        _historyList = snapshot.data!.docs
+                            .map((doc) => OrderList.fromSnapshot(doc))
+                            .toList();
 
-                    // filterNavigate(
-                    //     scaffoldKey, currentTab ?? 0, datePick, isDriver);
-                  },
-                  icon: const Icon(
-                    Icons.calendar_month_outlined,
-                    color: Colors.white,
-                  ))
-            ],
-            bottom: const TabBar(
-                labelColor: Colors.white,
-                labelStyle:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                unselectedLabelColor: Colors.grey,
-                unselectedLabelStyle: TextStyle(
-                  fontSize: 17,
-                ),
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorColor: Color(0xFFFCA311),
-                tabs: <Widget>[
-                  Tab(
-                    child: Text('Pending'),
+                        return Container(
+                          constraints: const BoxConstraints(
+                              minWidth: 400, maxWidth: 400),
+                          child: ListView.builder(
+                            itemCount: _historyList.length,
+                            padding: const EdgeInsets.all(12),
+                            itemBuilder: (context, index) {
+                              final item = _historyList[index];
+                              item as OrderList;
+                              // totalEarning += item.price ?? 0;
+                              return HistoryCard(
+                                card: item,
+                                type: false,
+                                uid: widget.uid,
+                                stock: 0,
+                              );
+                            },
+                          ),
+                        );
+                      }
+                    },
                   ),
-                  Tab(
-                    child: Text('Complete'),
-                  ),
-                ]),
+                )
+              ]),
+            ),
           ),
-          body: TabBarView(
-            children: [
-              HistoryBody(
-                isOrder: true,
-                uid: user!.uid,
-              ),
-              HistoryBody(
-                isOrder: false,
-                uid: user!.uid,
-              ),
-            ],
-          )),
-    );
+        ));
+  }
+
+  Future<void> init() async {
+    int month = widget.time.month;
+    int year = widget.time.year;
+    _historyStream = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(widget.uid)
+        .collection('Orders')
+        .where('time',
+            isGreaterThanOrEqualTo:
+                DateTime(year, month, 1).millisecondsSinceEpoch)
+        .where('time',
+            isLessThan: DateTime(year, month + 1, 1).millisecondsSinceEpoch)
+        .orderBy('time', descending: true)
+        .snapshots();
   }
 }
