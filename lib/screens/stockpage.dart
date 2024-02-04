@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/customappbar.dart';
 
@@ -105,6 +106,7 @@ class _StockPageState extends State<StockPage> {
   }
 
   Future<void> fetchStock() async {
+    final prefs = await SharedPreferences.getInstance();
     DocumentReference docRef = fire.collection('Users').doc(user!.uid);
     _listenStock = docRef.snapshots().listen((DocumentSnapshot event) {
       if (event.exists) {
@@ -112,6 +114,7 @@ class _StockPageState extends State<StockPage> {
         setState(() {
           stock = data['stock'] ?? 0;
         });
+        final setStock = prefs.setInt('stock', stock!);
         _listenStock?.cancel();
       }
     });

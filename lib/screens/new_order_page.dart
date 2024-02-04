@@ -267,7 +267,7 @@ class _NewOrderPageState extends State<NewOrderPage>
 
   Future<void> init() async {
     _pref = await SharedPreferences.getInstance();
-    // priceController.text = _pref.getString('${widget.item.cid}') ?? '3.5';
+    priceController.text = _pref.getString('${widget.item.cid}') ?? '3.5';
     setState(() {});
   }
 
@@ -378,6 +378,7 @@ class _NewOrderPageState extends State<NewOrderPage>
 
   Future<void> updateStock(String qty) async {
     int newstock = stock! - int.parse(qty);
+    await _pref.setInt('stock', newstock);
     DocumentReference docRef = fire.collection('Users').doc(user!.uid);
     try {
       await docRef.update({'stock': newstock}).then((value) => processDone());

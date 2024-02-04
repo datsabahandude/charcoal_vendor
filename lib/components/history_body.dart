@@ -2,6 +2,7 @@ import 'package:charcoal_vendor/components/history_card.dart';
 import 'package:charcoal_vendor/models/order_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HistoryBody extends StatefulWidget {
   final bool isOrder;
@@ -148,17 +149,7 @@ class _HistoryBodyState extends State<HistoryBody> {
 
 // replace getStock() with sharedpref method
   Future<void> getStock() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.uid)
-        .get()
-        .then((value) {
-      if (value.exists) {
-        Map<String, dynamic> data = value.data() as Map<String, dynamic>;
-        setState(() {
-          stock = data['stock'] ?? 0;
-        });
-      }
-    });
+    final prefs = await SharedPreferences.getInstance();
+    stock = prefs.getInt('stock') ?? 0;
   }
 }
