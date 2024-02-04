@@ -111,7 +111,6 @@ class _HistoryBodyState extends State<HistoryBody> {
                               type: widget.isOrder,
                               uid: widget.uid,
                               stock: stock!,
-                              // need to use savedpref to remember stock instead
                             );
                           },
                         ),
@@ -147,7 +146,6 @@ class _HistoryBodyState extends State<HistoryBody> {
     }
   }
 
-// replace getStock() with sharedpref method
   Future<void> getStock() async {
     final prefs = await SharedPreferences.getInstance();
     stock = prefs.getInt('stock') ?? 0;

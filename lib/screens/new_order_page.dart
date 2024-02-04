@@ -40,11 +40,11 @@ class _NewOrderPageState extends State<NewOrderPage>
   @override
   void initState() {
     super.initState();
-    init();
+
     qtyController.text = '0';
     priceController.text = '3.5';
     locationController.text = widget.item.location!;
-
+    init();
     stock = widget.stocks;
   }
 
