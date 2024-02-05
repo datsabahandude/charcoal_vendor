@@ -19,22 +19,14 @@ class StockPage extends StatefulWidget {
 class _StockPageState extends State<StockPage> {
   TextEditingController stockctrl = TextEditingController();
   String date = DateFormat('d MMM yyyy HH:mm').format(DateTime.now());
-  int? stock;
+  int stock = 0;
   int updatedstock = 0;
   User? user = FirebaseAuth.instance.currentUser;
   FirebaseFirestore fire = FirebaseFirestore.instance;
-  StreamSubscription<DocumentSnapshot>? _listenStock;
   @override
   void initState() {
     super.initState();
-    // fetch amount from db
     fetchStock();
-  }
-
-  @override
-  void dispose() {
-    _listenStock?.cancel();
-    super.dispose();
   }
 
   @override
@@ -108,20 +100,19 @@ class _StockPageState extends State<StockPage> {
   Future<void> fetchStock() async {
     final prefs = await SharedPreferences.getInstance();
     DocumentReference docRef = fire.collection('Users').doc(user!.uid);
-    _listenStock = docRef.snapshots().listen((DocumentSnapshot event) {
-      if (event.exists) {
-        Map<String, dynamic> data = event.data() as Map<String, dynamic>;
+    await docRef.get().then((value) {
+      if (value.exists) {
+        Map<String, dynamic> data = value.data() as Map<String, dynamic>;
         setState(() {
           stock = data['stock'] ?? 0;
         });
-        final setStock = prefs.setInt('stock', stock!);
-        _listenStock?.cancel();
+        prefs.setInt('stock', stock);
       }
     });
   }
 
   Future<void> updateDB() async {
-    updatedstock = stock! + int.parse(stockctrl.text);
+    updatedstock = stock + int.parse(stockctrl.text);
     try {
       await fire
           .collection('Users')
