@@ -6,19 +6,13 @@ import 'package:get/get.dart';
 
 import '../components/history_body.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  int? currentTab;
-  User? user = FirebaseAuth.instance.currentUser;
-  @override
   Widget build(BuildContext context) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    User? user = FirebaseAuth.instance.currentUser;
     return PopScope(
         canPop: false,
         child: DefaultTabController(
@@ -77,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 HistoryBody(
                   isOrder: false,
-                  uid: user!.uid,
+                  uid: user.uid,
                 ),
               ],
             ),
